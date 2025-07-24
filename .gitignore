@@ -1,0 +1,47 @@
+# Gitが追跡しないようにするファイルを指定
+# システムファイルや一時ファイル、ビルド成果物などを除外します
+
+# OS files
+.DS_Store
+Thumbs.db
+.localized
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+.env
+venv/
+env/
+*.egg-info/
+.Python/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Downloads folder specific (caution with these, only if you truly don't want them tracked)
+Downloads/  # This might be causing your permission issues if it's trying to track the entire Downloads folder. Remove if you want specific subfolders tracked.
+AppData/
+Contacts/
+Cookies/
+Desktop/
+Documents/
+Favorites/
+Links/
+Music/
+NTUSER.DAT
+OneDrive/
+Pictures/
+Saved Games/
+Searches/
+Videos/
+Templates/
+'スタート メニュー'/
