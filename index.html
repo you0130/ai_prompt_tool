@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIプロンプト最適化ツール</title>
+    <style>
+        /* ここはウェブページの見た目を整えるためのCSSコードです */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #eef2f6; /* 薄いグレーの背景 */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 上部に寄せる */
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin-top: 50px; /* 上からの余白 */
+            background-color: #ffffff; /* 白い背景 */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* 影 */
+            box-sizing: border-box; /* パディングを含めて幅を計算 */
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50; /* 濃い青色 */
+            margin-bottom: 25px;
+            font-size: 2.2em;
+        }
+        p {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        textarea {
+            width: calc(100% - 22px); /* パディング分を考慮 */
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #cce0ff; /* 淡い青色のボーダー */
+            border-radius: 8px;
+            resize: vertical; /* 縦方向にリサイズ可能 */
+            min-height: 120px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #007bff; /* フォーカス時に青色 */
+            outline: none;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff; /* 青色のボタン */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #0056b3; /* ホバーで濃い青 */
+            transform: translateY(-2px); /* 少し上に動く */
+        }
+        button:active {
+            transform: translateY(0); /* クリックで元に戻る */
+        }
+        .result-section {
+            margin-top: 40px;
+            border-top: 1px dashed #eee; /* 点線ボーダー */
+            padding-top: 30px;
+        }
+        .prompt-box {
+            background-color: #f8faff; /* 非常に薄い青の背景 */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            word-break: break-all; /* 長い単語でも折り返す */
+            position: relative;
+            border: 1px solid #e0efff; /* 淡い青のボーダー */
+        }
+        .prompt-box h3 {
+            margin-top: 0;
+            color: #34495e; /* 暗めの青灰色 */
+            font-size: 1.2em;
+            border-bottom: 2px solid #aaddff; /* 下線 */
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .prompt-box p {
+            text-align: left;
+            font-family: 'Consolas', 'Monaco', monospace; /* プログラミングフォント */
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #444;
+            padding-right: 40px; /* コピーボタンのためのスペース */
+        }
+        .copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745; /* 緑色のコピーボタン */
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: normal;
+            transition: background-color 0.3s ease;
+            width: auto; /* ボタン幅を自動調整 */
+        }
+        .copy-btn:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+        .error-message {
+            color: #d9534f; /* 赤色のエラーメッセージ */
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            background-color: #ffebe8;
+            border: 1px solid #ffccc7;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.1em;
+        }
+        /* レスポンシブデザイン */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin-top: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 1em;
+            }
+            button {
+                padding: 12px;
+                font-size: 1.1em;
+            }
+            .prompt-box {
+                padding: 15px;
+            }
+            .prompt-box h3 {
+                font-size: 1.1em;
+            }
+            .prompt-box p {
+                font-size: 0.95em;
+            }
+            .copy-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AIプロンプト最適化ツール</h1>
+        <p>イメージしたい画像を日本語で入力してください。AIが画像生成AI用の詳細なプロンプトを生成します。</p>
+        <textarea id="userInput" placeholder="例: 森の中の神秘的な城、夜、光が差している、ファンタジー、リアルな描写"></textarea>
+        <button onclick="generatePrompt()">プロンプトを生成</button>
+
+        <div id="loading" class="loading" style="display: none;">生成中...AIがプロンプトを考案しています。</div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <h2>生成されたプロンプト</h2>
+            <div class="prompt-box">
+                <h3>ポジティブプロンプト:</h3>
+                <p id="positivePrompt"></p>
+                <button class="copy-btn" onclick="copyToClipboard('positivePrompt')">コピー</button>
+            </div>
+            <div class="prompt-box">
+                <h3>ネガティブプロンプト:</h3>
+                <p id="negativePrompt"></p>
+                <button class="copy-btn" onclick="copyToClipboard('negativePrompt')">コピー</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // プロンプト生成ボタンがクリックされたときに実行される関数
+        async function generatePrompt() {
+            const userInput = document.getElementById('userInput').value; // ユーザーの入力値を取得
+            const loadingDiv = document.getElementById('loading');
+            const errorMessageDiv = document.getElementById('errorMessage');
+            const resultSection = document.getElementById('resultSection');
+
+            // 以前の表示をリセット
+            loadingDiv.style.display = 'block'; // ロード中メッセージを表示
+            errorMessageDiv.style.display = 'none'; // エラーメッセージを非表示
+            resultSection.style.display = 'none'; // 結果セクションを非表示
+
+            // 入力がない場合のチェック
+            if (!userInput.trim()) {
+                errorMessageDiv.textContent = 'イメージを入力してください。';
+                errorMessageDiv.style.display = 'block';
+                loadingDiv.style.display = 'none';
+                return;
+            }
+
+            try {
+                // Flaskのバックエンド（/generate_prompt）にリクエストを送信
+                const response = await fetch('/generate_prompt', {
+                    method: 'POST', // POSTメソッドでデータを送信
+                    headers: {
+                        'Content-Type': 'application/json' // JSON形式でデータを送ることを宣言
+                    },
+                    body: JSON.stringify({ user_input: userInput }) // ユーザー入力をJSON形式に変換して送信
+                });
+
+                const data = await response.json(); // レスポンスをJSONとして解析
+
+                if (response.ok) { // HTTPステータスコードが200番台（成功）の場合
+                    document.getElementById('positivePrompt').textContent = data.positive_prompt;
+                    document.getElementById('negativePrompt').textContent = data.negative_prompt;
+                    resultSection.style.display = 'block'; // 結果セクションを表示
+                } else { // エラーレスポンスの場合
+                    errorMessageDiv.textContent = data.error || '不明なエラーが発生しました。';
+                    errorMessageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                // ネットワークエラーなどの例外をキャッチ
+                console.error('Fetch error:', error);
+                errorMessageDiv.textContent = '通信エラーが発生しました。ネットワーク接続を確認してください。';
+                errorMessageDiv.style.display = 'block';
+            } finally {
+                // 成功・失敗にかかわらず、ロード中メッセージを非表示にする
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // コピーボタンがクリックされたときに実行される関数
+        function copyToClipboard(elementId) {
+            const textToCopy = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('プロンプトをコピーしました！');
+            }).catch(err => {
+                console.error('コピーに失敗しました', err);
+                alert('コピーに失敗しました。手動でコピーしてください。');
+            });
+        }
+    </script>
+</body>
+</html>
