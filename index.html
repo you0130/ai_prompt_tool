@@ -221,7 +221,7 @@
 
             try {
                 // Flaskのバックエンド（/generate_prompt）にリクエストを送信
-                const response = await fetch('/api/generate_prompt', {
+                const response = await fetch('/api/generate_prompt', {'/api'
                     method: 'POST', // POSTメソッドでデータを送信
                     headers: {
                         'Content-Type': 'application/json' // JSON形式でデータを送ることを宣言
