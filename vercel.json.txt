@@ -12,11 +12,11 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/api/generate_prompt",
       "dest": "api/app.py"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.*)",  <-- **この部分を修正してください**
       "dest": "index.html"
     }
   ]
